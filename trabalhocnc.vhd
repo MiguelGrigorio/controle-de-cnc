@@ -36,8 +36,6 @@ architecture behavioral of trabalhocnc is
 	signal stepsX, stepsY                         : integer range 0 to 6579;
 	signal esquerda, direita, cima, baixo         : std_logic;
 
-	-- Percorrendo o botao A ou B
-	signal caminho : std_logic;
 
 begin
 
@@ -91,22 +89,125 @@ begin
 	end process;
 
 	-- Logica de pontos para steps
-	X <= X0 when state = A0 else
-		X1 when state = A1 else
-		X2 when state = A2 else
-		X3 when state = A3 else
-		X1 when state = A4 else
-		X0 when state = A5 else
-
-		X0 when state = B0 else
-		X1 when (state = B1 or state = B4 or state = B5) and X1 <= X2 and X1 <= X3 else
-		X2 when (state = B1 or state = B4 or state = B5) and X2 <= X1 and X2 <= X3 else
-		X3 when (state = B1 or state = B4 or state = B5) and X3 <= X1 and X3 <= X2 else
-
-		X1 when (state = B2 or state = B3) and X1 >= X2 and X1 >= X3 else
-		X2 when (state = B2 or state = B3) and X2 >= X1 and X2 >= X3 else
-		X3 when (state = B2 or state = B3) and X3 >= X1 and X3 >= X2;
-
+process(state, X0, X1, X2, X3, Y0, Y1, Y2, Y3)
+begin
+	case state is
+		when A0 =>
+		
+			X <= X0;
+			Y <= Y0;
+		when A1 =>
+		
+			X <= X1;
+			Y <= Y1;
+		when A2 =>
+		
+			X <= X2;
+			Y <= Y2;
+		when A3 =>
+		
+			X <= X3;
+			Y <= Y3;
+		when A4 =>
+		
+			X <= X1;
+			Y <= Y1;
+		when A5 =>
+		
+			X <= X0;
+			Y <= Y0;
+		when B0 => 
+		
+			X <= X0;
+			Y <= Y0;
+		when B1 =>
+		
+			if X1 <= X2 and X1 <= X3 then
+				X <= X1;
+			elsif X2 <= X1 and X2 <= X3 then
+				X <= X2;
+			else 
+				X <= X3;
+			end if;
+			
+			if Y1 <= Y2 and Y1 <= Y3 then
+				Y <= Y1;
+			elsif Y2 <= Y1 and Y2 <= Y3 then
+				Y <= Y2;
+			else 
+				Y <= Y3;
+			end if;
+		when B2 =>
+		
+			if X1 >= X2 and X1 >= X3 then
+				X <= X1;
+			elsif X2 >= X1 and X2 >= X3 then
+				X <= X2;
+			else 
+				X <= X3;
+			end if;
+			
+			if Y1 <= Y2 and Y1 <= Y3 then
+				Y <= Y1;
+			elsif Y2 <= Y1 and Y2 <= Y3 then
+				Y <= Y2;
+			else 
+				Y <= Y3;
+			end if;
+		when B3 =>
+		
+			if X1 >= X2 and X1 >= X3 then
+				X <= X1;
+			elsif X2 >= X1 and X2 >= X3 then
+				X <= X2;
+			else 
+				X <= X3;
+			end if;
+			
+			if Y1 >= Y2 and Y1 >= Y3 then
+				Y <= Y1;
+			elsif Y2 >= Y1 and Y2 >= Y3 then
+				Y <= Y2;
+			else 
+				Y <= Y3;
+			end if;
+		when B4 =>
+		
+			if X1 <= X2 and X1 <= X3 then
+				X <= X1;
+			elsif X2 <= X1 and X2 <= X3 then
+				X <= X2;
+			else 
+				X <= X3;
+			end if;
+			
+			if Y1 >= Y2 and Y1 >= Y3 then
+				Y <= Y1;
+			elsif Y2 >= Y1 and Y2 >= Y3 then
+				Y <= Y2;
+			else 
+				Y <= Y3;
+			end if;
+		when others =>
+		
+			if X1 <= X2 and X1 <= X3 then
+				X <= X1;
+			elsif X2 <= X1 and X2 <= X3 then
+				X <= X2;
+			else 
+				X <= X3;
+			end if;
+			
+			if Y1 <= Y2 and Y1 <= Y3 then
+				Y <= Y1;
+			elsif Y2 <= Y1 and Y2 <= Y3 then
+				Y <= Y2;
+			else 
+				Y <= Y3;
+			end if;
+		
+end case;
+end process;
 	with X select Xp <=
 		0 when 0,
 		731 when 1,
@@ -117,23 +218,8 @@ begin
 		4386 when 6,
 		5117 when 7,
 		5848 when 8,
-		6579 when 9;
+		6579 when others;
 
-	Y <= Y0 when state = A0 else
-		Y1 when state = A1 else
-		Y2 when state = A2 else
-		Y3 when state = A3 else
-		Y1 when state = A4 else
-		Y0 when state = A5 else
-
-		Y0 when state = B0 else
-		Y1 when (state = B1 or state = B2 or state = B5) and Y1 <= Y2 and Y1 <= Y3 else
-		Y2 when (state = B1 or state = B2 or state = B5) and Y2 <= Y1 and Y2 <= Y3 else
-		Y3 when (state = B1 or state = B2 or state = B5) and Y3 <= Y1 and Y3 <= Y2 else
-
-		X1 when (state = B3 or state = B4) and Y1 >= Y2 and Y1 >= Y3 else
-		X2 when (state = B3 or state = B4) and Y2 >= Y1 and Y2 >= Y3 else
-		X3 when (state = B3 or state = B4) and Y3 >= Y1 and Y3 >= Y2;
 
 	with Y select Yp <=
 		0 when 0,
@@ -145,7 +231,7 @@ begin
 		4386 when 6,
 		5117 when 7,
 		5848 when 8,
-		6579 when 9;
+		6579 when others;
 	-- Controle da direcao
 	esquerda <= '0';
 	direita  <= '1';
@@ -157,13 +243,6 @@ begin
 	BA    <= not BA_n;
 	BB    <= not BB_n;
 	BC    <= not BC_n;
-
-	-- Se estou usando os motores
-	with state select caminho <=
-		'0' when Points,
-		'0' when Buttons,
-		'0' when C,
-		'1' when others;
 
 	-- Entitys
 	timer2sec : entity work.timer port map (
@@ -328,9 +407,9 @@ begin
 	end process;
 
 	-- Logica dos motores
-	process (caminho, stepsX, Xp, stepsY, Yp, esquerda, direita, cima, baixo)
+	process (state, stepsX, Xp, stepsY, Yp, esquerda, direita, cima, baixo, motorX)
 	begin
-		if caminho = '1' then
+		if state /= Points and state /= C and state /= Buttons then
 			if stepsX = Xp then
 				motorX     <= '0';
 				directionX <= '0';
@@ -354,6 +433,11 @@ begin
 					directionY <= baixo;
 				end if;
 			end if;
+		else
+			motorX     <= '0';
+			directionX <= '0';
+			motorY     <= '0';
+			directionY <= '0';
 		end if;
 	end process;
 
@@ -361,11 +445,6 @@ begin
 	process (state)
 	begin
 		case state is
-
-			when others =>
-
-				laser      <= '0';
-				resetTimer <= '1';
 
 			when A1 =>
 
@@ -386,6 +465,12 @@ begin
 
 				laser      <= '1';
 				resetTimer <= '1';
+				
+			when others =>
+
+				laser      <= '0';
+				resetTimer <= '1';
+
 
 		end case;
 	end process;
