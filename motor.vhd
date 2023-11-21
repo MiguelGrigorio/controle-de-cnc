@@ -31,7 +31,7 @@ begin
 				when Pink         => next_state     <= PinkYellow;
 				when PinkYellow   => next_state   	<= Yellow;
 				when Yellow       => next_state     <= YellowOrange;
-				when YellowOrange => next_state 	<= Orange;
+				when YellowOrange => next_state 		<= Orange;
 				when Orange       => next_state     <= OrangeBlue;
 				when OrangeBlue   => next_state   	<= Blue;
 			end case;
@@ -54,7 +54,7 @@ begin
 	begin
 		if reset = '1' then
 			state <= Blue;
-			step  <= 0;
+			steps  <= 0;
 		elsif rising_edge(clock) then
 			step <= steps;
 			if ovf = '1' and enable = '1' then
